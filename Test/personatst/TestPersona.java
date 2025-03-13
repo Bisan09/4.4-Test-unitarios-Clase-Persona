@@ -45,7 +45,7 @@ class PersonaTest {
 
 	@Test
 	void testPersona() {
-		//Verifica que el objeto que se crea es de tipo persona 
+	
 		Persona carlos = new Persona();
 		assert(carlos instanceof Persona);
 		
@@ -75,8 +75,7 @@ class PersonaTest {
         assertTrue(ismael.getDNI().matches(dniRegex));
     }
 	
-	//No es posible comprobar los casos en los que el dni realmente no sea válido puesto que los dni se 
-	//generan automáticamente al crear una persona. El método que genera los DNI ya está testado. Parece no haber margen de error.
+	
 	@Test
 	public void testEsValidoDNI() {
 		assertTrue(jose.esValidoDNI());
@@ -89,12 +88,12 @@ class PersonaTest {
 		jose.setSexo('M');
 		assertEquals(jose.getSexo(), 'M');
 		
-		//Se supone que a un sexo inválido se le asigna M
+	
 		jose.setSexo('T');
 		assertEquals(jose.getSexo(), 'H');
 	}
 	
-	//Con este test he averiguado que el campo altura debe estar en metros, no en centímetros.
+	
     @Test
     public void testCalcularIMCPesoIdeal() {
     	jose.setAltura(1.60);
@@ -102,8 +101,7 @@ class PersonaTest {
     }
     
     
-    //Aquí tuve que crear un método público para acceder a generaLetraDNI() porque este es inaccesible 
-    //debido a su visibilidad privada.
+  
     @Test
     public void testGeneraLetraDNI() {
     	assertEquals(ismael.visualizarGeneraLetraDNI(11), 'B');

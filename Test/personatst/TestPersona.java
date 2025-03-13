@@ -1,90 +1,163 @@
 package personatst;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Iterator;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import code.Persona;
 
-	public class TestPersona {
+class PersonaTest {
 
-	    @Test
-	    public void testConstructorPorDefecto() {
-	        Persona persona = new Persona();
-	        assertNotNull(persona);
-	        assertEquals("", persona.getNombre());
-	        assertEquals(0, persona.getEdad());
-	        assertEquals('H', persona.getSexo());
-	        assertEquals(0.0, persona.getPeso());
-	        assertEquals(0.0, persona.getAltura());
-	        assertNotNull(persona.getDNI());
-	    }
-
-	    @Test
-	    public void testConstructorConParametros() {
-	        Persona persona = new Persona("Juan", 30, 'H');
-	        assertEquals("Juan", persona.getNombre());
-	        assertEquals(30, persona.getEdad());
-	        assertEquals('H', persona.getSexo());
-	        assertEquals(0.0, persona.getPeso());
-	        assertEquals(0.0, persona.getAltura());
-	        assertNotNull(persona.getDNI());
-	    }
-
-	    @Test
-	    public void testSettersYGetters() {
-	        Persona persona = new Persona("Carlos", 25, 'H');
-	        persona.setNombre("Miguel");
-	        persona.setEdad(26);
-	        persona.setSexo('M');
-	        persona.setPeso(70.5);
-	        persona.setAltura(1.75);
-
-	        assertEquals("Miguel", persona.getNombre());
-	        assertEquals(26, persona.getEdad());
-	        assertEquals('M', persona.getSexo());
-	        assertEquals(70.5, persona.getPeso());
-	        assertEquals(1.75, persona.getAltura());
-	    }
-
-	    @Test
-	    public void testComprobarSexo() {
-	        Persona persona1 = new Persona("Juan", 20, 'H');
-	        assertEquals('H', persona1.getSexo());
-	        
-	        Persona persona2 = new Persona("Ana", 22, 'X'); // Sexo no válido
-	        assertEquals('H', persona2.getSexo());
-	    }
-
-	    @Test
-	    public void testCalcularIMC() {
-	        Persona persona1 = new Persona("Juan", 25, 'H', 70, 1.75);
-	        assertEquals(0, persona1.calcularIMC()); // IMC ideal
-
-	        Persona persona2 = new Persona("Ana", 30, 'M', 50, 1.75);
-	        assertEquals(-1, persona2.calcularIMC()); // Infrapeso
-
-	        Persona persona3 = new Persona("Carlos", 35, 'H', 90, 1.75);
-	        assertEquals(1, persona3.calcularIMC()); // Sobrepeso
-	    }
-
-	    @Test
-	    public void testEsMayorDeEdad() {
-	        Persona persona1 = new Persona("Juan", 20, 'H');
-	        assertTrue(persona1.esMayorDeEdad());
-
-	        Persona persona2 = new Persona("Ana", 17, 'M');
-	        assertFalse(persona2.esMayorDeEdad());
-	    }
-
-	    @Test
-	    public void testToString() {
-	        Persona persona = new Persona("Pedro", 28, 'H', 80, 1.80);
-	        String expected = "Informacion de la persona:\n"
-	                + "Nombre: Pedro\n"
-	                + "Sexo: hombre\n"
-	                + "Edad: 28 años\n"
-	                + "DNI: " + persona.getDNI() + "\n"
-	                + "Peso: 80.0 kg\n"
-	                + "Altura: 1.8 metros\n";
-	        assertEquals(expected, persona.toString());
-	    }
+	Persona ivan = new Persona("Jose", 20, 'H', 60.00, 160);
+	Persona jose = new Persona("Carlos", 15 ,'T', 100.00, 190);
+	Persona ismael = new Persona();
+	 /**
+     * El peso de la persona esta por debajo del peso ideal
+     */
+    public static final int INFRAPESO = -1;
+ 
+    /**
+     * El peso de la persona esta en su peso ideal
+     */
+    public static final int PESO_IDEAL = 0;
+ 
+    /**
+     * El peso de la persona esta por encima del peso ideal
+     */
+    public static final int SOBREPESO = 1;
+	
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		Persona ivan = new Persona("Jose", 20, 'H', 68.0, 1.75);
+		Persona jose = new Persona("Carlos", 18 ,'T', 100.00, 7);
+		Persona ismael = new Persona();
+		jose.setPeso(120);
+		ivan.setPeso(60);
+		ivan.setAltura(1.60);
+		
+	
 	}
+
+	@Test
+	void testPersona() {
+		//Verifica que el objeto que se crea es de tipo persona 
+		Persona carlos = new Persona();
+		assert(carlos instanceof Persona);
+		
+	}
+
+	@Test
+	void testSetNombre() {
+		Persona carlos = new Persona();
+		carlos.setNombre("Julio");
+		assertEquals(carlos.getNombre(), "Julio");
+	}
+
+	@Test
+	void testSetEdad() {
+		ismael.setEdad(12);
+		assertTrue(ismael.getEdad() == 12);
+	}
+	
+
+	@Test
+    public void testGenerarDni() {
+        Persona persona = new Persona();
+        String dniRegex = "\\d{8}[A-Z]";
+
+        assertTrue(persona.getDNI().matches(dniRegex));
+        assertTrue(ivan.getDNI().matches(dniRegex));
+        assertTrue(ismael.getDNI().matches(dniRegex));
+    }
+	
+	//No es posible comprobar los casos en los que el dni realmente no sea válido puesto que los dni se 
+	//generan automáticamente al crear una persona. El método que genera los DNI ya está testado. Parece no haber margen de error.
+	@Test
+	public void testEsValidoDNI() {
+		assertTrue(jose.esValidoDNI());
+		assertTrue(jose.esValidoDNI());
+		assertTrue(ismael.esValidoDNI());
+	}
+	
+	@Test
+	void testSetSexo() {
+		jose.setSexo('M');
+		assertEquals(jose.getSexo(), 'M');
+		
+		//Se supone que a un sexo inválido se le asigna M
+		jose.setSexo('T');
+		assertEquals(jose.getSexo(), 'H');
+	}
+	
+	//Con este test he averiguado que el campo altura debe estar en metros, no en centímetros.
+    @Test
+    public void testCalcularIMCPesoIdeal() {
+    	jose.setAltura(1.60);
+        assertEquals(Persona.PESO_IDEAL, jose.calcularIMC());
+    }
+    
+    
+    //Aquí tuve que crear un método público para acceder a generaLetraDNI() porque este es inaccesible 
+    //debido a su visibilidad privada.
+    @Test
+    public void testGeneraLetraDNI() {
+    	assertEquals(ismael.visualizarGeneraLetraDNI(11), 'B');
+    	assertEquals(ismael.visualizarGeneraLetraDNI(22), 'E');
+    	assertEquals(ismael.visualizarGeneraLetraDNI(1), 'R');
+    }
+
+	@Test
+	void testSetPeso() {
+		ismael.setPeso(92.1);
+		assertTrue(ismael.getPeso()==92.1);
+	}
+	
+	@Test
+	void testMayorEdad() {
+		jose.setEdad(1);
+		assertTrue(ismael.esMayorDeEdad());
+		assertFalse(jose.esMayorDeEdad());
+
+	}
+	
+	
+	@Test
+	void testSetAltura() {
+		ivan.setAltura(179.3);
+		assertTrue(ivan.getAltura()==179.3);	
+	}
+	
+    @Test
+    public void testCalcularIMC_Infrapeso() {
+        assertEquals(Persona.INFRAPESO, jose.calcularIMC());
+    }
+    
+    @Test
+    public void testCalcularIMC_Sobrepeso() {
+        assertEquals(Persona.SOBREPESO, ismael.calcularIMC());
+    }
+
+
+	//	Persona ivan = new Persona("ivan", 20, 'H', 60.00, 162);
+
+	@Test
+	void testToString() {
+		String resultadoEsperado = "Informacion de la persona:\n"
+                + "Nombre: " + "Jose" + "\n"
+                + "Sexo: " + "hombre" + "\n"
+                + "Edad: " + 20 + " años\n"
+                + "DNI: " + ivan.getDNI() + "\n"
+                + "Peso: " + 60.00 + " kg\n"
+                + "Altura: " + 160.0 + " metros\n";
+
+		assertTrue(jose.toString().contains(resultadoEsperado));
+		
+	}
+
+
+}
